@@ -54,7 +54,7 @@ export default function ProgrammingPage() {
               Buenos Aires / Radio online
             </p>
 
-            <h1 className="mt-5 break-words font-display text-5xl font-bold uppercase sm:text-7xl lg:text-8xl">
+            <h1 className="mt-5 wrap-break-word font-display text-5xl font-bold uppercase sm:text-7xl lg:text-8xl">
               Programación
               <span className="text-accent">.</span>
             </h1>

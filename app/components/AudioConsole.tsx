@@ -112,7 +112,7 @@ export default function AudioConsole({
             <div className="mt-4 flex items-center gap-5 lg:flex-col">
               <div
                 aria-hidden="true"
-                className="flex size-20 shrink-0 items-center justify-center rounded-full p-[3px]"
+                className="flex size-20 shrink-0 items-center justify-center rounded-full p-0.75"
                 style={{
                   background: `conic-gradient(
                     from 225deg,

@@ -43,7 +43,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/40 lg:bg-black/20" />
         </div>
 
-        <div className="mx-auto grid min-h-[560px] max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-[1.35fr_1fr] lg:px-8 lg:py-20">
+        <div className="mx-auto grid min-h-140 max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-[1.35fr_1fr] lg:px-8 lg:py-20">
           <div>
             <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.22em] text-muted">
               Buenos Aires / Radio online / Desde el underground
