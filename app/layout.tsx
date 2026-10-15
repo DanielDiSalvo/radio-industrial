@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Oswald } from "next/font/google";
 import "./globals.css";
+import RadioProvider from "./components/RadioProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <RadioProvider>{children}</RadioProvider>
+      </body>
     </html>
   );
 }

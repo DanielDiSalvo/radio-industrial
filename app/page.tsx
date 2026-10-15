@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import Header from "./components/Header";
+import AudioConsole from "./components/AudioConsole";
+import FeaturedEpisodes from "./components/FeaturedEpisodes";
+import { useRadio } from "./components/RadioProvider";
 
 const genres = [
   "Industrial",
@@ -14,116 +17,20 @@ const genres = [
   "Underground",
 ];
 
-const navigation = [
-  { label: "Inicio", href: "/" },
-  { label: "Programación", href: "/programacion" },
-  { label: "Archivo", href: "/archivo" },
-  { label: "La radio", href: "/la-radio" },
-];
-
 export default function Home() {
-  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  function startListening() {
-    setIsPlayerOpen(true);
-    setIsPlaying(true);
-    setIsMenuOpen(false);
-  }
-
-  function stopListening() {
-    setIsPlaying(false);
-    setIsPlayerOpen(false);
-  }
+  const {
+    isPlayerOpen,
+    isPlaying,
+    volume,
+    setVolume,
+    startListening,
+    stopListening,
+    togglePlayback,
+  } = useRadio();
 
   return (
     <main className="min-h-screen">
-      <header className="relative z-20 border-b border-border bg-background">
-        <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-5 lg:px-8">
-          <a
-            href="/"
-            className="flex items-center gap-3"
-            aria-label="Radio Industrial — Inicio"
-          >
-            <span
-              aria-hidden="true"
-              className="flex h-9 items-center gap-1 text-accent"
-            >
-              {[16, 30, 22, 36, 18].map((height, index) => (
-                <span
-                  key={index}
-                  className="w-1 bg-current"
-                  style={{ height }}
-                />
-              ))}
-            </span>
-
-            <span className="font-display text-2xl font-bold uppercase sm:text-3xl">
-              Radio Industrial
-            </span>
-          </a>
-
-          <nav aria-label="Navegación principal" className="hidden lg:block">
-            <ul className="flex items-center gap-8 font-mono text-xs">
-              {navigation.map(({ label, href }) => (
-                <li key={href}>
-                  <a
-                    href={href}
-                    aria-current={href === "/" ? "page" : undefined}
-                    className={`inline-block border-b-2 py-2 transition-colors hover:text-accent ${
-                      href === "/" ? "border-accent" : "border-transparent"
-                    }`}
-                  >
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <button
-            type="button"
-            onClick={startListening}
-            className="hidden border border-accent px-5 py-3 font-mono text-xs uppercase tracking-wider text-accent transition-colors hover:bg-accent hover:text-white lg:block"
-          >
-            Escuchar en vivo
-          </button>
-
-          <button
-            type="button"
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-navigation"
-            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex size-11 items-center justify-center border border-border text-2xl lg:hidden"
-          >
-            {isMenuOpen ? "×" : "☰"}
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <nav
-            id="mobile-navigation"
-            aria-label="Navegación móvil"
-            className="border-t border-border px-5 py-5 lg:hidden"
-          >
-            <ul className="flex flex-col gap-5 font-mono text-sm">
-              {navigation.map(({ label, href }) => (
-                <li key={href}>
-                  <a
-                    href={href}
-                    aria-current={href === "/" ? "page" : undefined}
-                    className="hover:text-accent"
-                  >
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-      </header>
+      <Header onListen={startListening} />
 
       <section
         aria-labelledby="hero-title"
@@ -240,7 +147,7 @@ export default function Home() {
 
                 <button
                   type="button"
-                  onClick={() => setIsPlaying(!isPlaying)}
+                  onClick={togglePlayback}
                   aria-label={isPlaying ? "Pausar demo" : "Reanudar demo"}
                   className="flex size-14 items-center justify-center rounded-full border-2 border-accent text-xl text-accent transition-colors hover:bg-accent hover:text-white"
                 >
@@ -251,6 +158,13 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      <AudioConsole
+        isPlaying={isPlaying}
+        volume={volume}
+        onTogglePlayback={togglePlayback}
+        onVolumeChange={setVolume}
+      />
 
       <section
         aria-label="Estilos musicales de la radio"
@@ -268,6 +182,7 @@ export default function Home() {
           </ul>
         </div>
       </section>
+      <FeaturedEpisodes />
     </main>
   );
 }
