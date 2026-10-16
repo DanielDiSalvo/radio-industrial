@@ -142,7 +142,7 @@ export default function Home() {
                   role="status"
                   className="font-mono text-[10px] uppercase tracking-wider text-muted"
                 >
-                  {isPlaying ? "Reproducción simulada" : "En pausa"}
+                  {isPlaying ? "Reproduciendo demo" : "En pausa"}
                 </p>
 
                 <button

@@ -1,5 +1,8 @@
 "use client";
 
+import { useRadio } from "./RadioProvider";
+import SignalMeter from "./SignalMeter";
+
 type AudioConsoleProps = {
   isPlaying: boolean;
   volume: number;
@@ -12,7 +15,18 @@ const waveform = Array.from(
   (_, index) => 8 + ((index * 37 + index * index * 13) % 65),
 );
 
-const signalLevels = [6, 3, 8, 5, 7, 4];
+function formatTime(seconds: number) {
+  const total = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const remainingSeconds = total % 60;
+
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(remainingSeconds).padStart(2, "0");
+
+  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
+}
 
 export default function AudioConsole({
   isPlaying,
@@ -20,6 +34,8 @@ export default function AudioConsole({
   onTogglePlayback,
   onVolumeChange,
 }: AudioConsoleProps) {
+  const { currentTime, duration, seek } = useRadio();
+
   return (
     <section
       aria-labelledby="console-title"
@@ -40,6 +56,7 @@ export default function AudioConsole({
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_160px_180px]">
+          {/* Reproducción y posición */}
           <div className="min-w-0">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
               Señal 001 / Demo
@@ -63,6 +80,7 @@ export default function AudioConsole({
               </button>
 
               <div className="min-w-0 flex-1">
+                {/* Onda decorativa; todavía no representa el MP3 */}
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 600 80"
@@ -85,11 +103,22 @@ export default function AudioConsole({
                 </svg>
 
                 <div className="mt-2 flex items-center justify-between gap-3 font-mono text-[10px] text-muted">
-                  <span>00:00</span>
-                  <span>Audio pendiente</span>
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
                 </div>
 
-                <div aria-hidden="true" className="mt-2 h-1 bg-border" />
+                <input
+                  type="range"
+                  aria-label="Posición de reproducción"
+                  aria-valuetext={`${formatTime(currentTime)} de ${formatTime(duration)}`}
+                  min={0}
+                  max={duration > 0 ? duration : 1}
+                  step={0.1}
+                  value={Math.min(currentTime, duration || 0)}
+                  disabled={duration <= 0}
+                  onChange={(event) => seek(Number(event.target.value))}
+                  className="h-11 w-full accent-accent disabled:opacity-40"
+                />
               </div>
             </div>
 
@@ -97,10 +126,11 @@ export default function AudioConsole({
               role="status"
               className="mt-4 font-mono text-[10px] uppercase tracking-wider text-muted"
             >
-              {isPlaying ? "Reproducción simulada" : "Demo en pausa"}
+              {isPlaying ? "Reproduciendo demo" : "En pausa"}
             </p>
           </div>
 
+          {/* Volumen */}
           <div className="border-t border-border pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
             <label
               htmlFor="console-volume"
@@ -112,7 +142,7 @@ export default function AudioConsole({
             <div className="mt-4 flex items-center gap-5 lg:flex-col">
               <div
                 aria-hidden="true"
-                className="flex size-20 shrink-0 items-center justify-center rounded-full p-0.75"
+                className="flex size-20 shrink-0 items-center justify-center rounded-full p-[3px]"
                 style={{
                   background: `conic-gradient(
                     from 225deg,
@@ -147,35 +177,8 @@ export default function AudioConsole({
             </div>
           </div>
 
-          <div className="border-t border-border pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-              Nivel de señal
-            </p>
-
-            <div aria-hidden="true" className="mt-5 flex h-24 items-end gap-2">
-              {signalLevels.map((level, column) => (
-                <div
-                  key={column}
-                  className="flex flex-1 flex-col-reverse gap-1"
-                >
-                  {Array.from({ length: 10 }, (_, block) => (
-                    <span
-                      key={block}
-                      className={`h-1.5 transition-colors ${
-                        isPlaying && volume > 0 && block < level
-                          ? "bg-accent"
-                          : "bg-border"
-                      }`}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-3 font-mono text-[9px] uppercase text-muted">
-              Visualización simulada
-            </p>
-          </div>
+          {/* Espectro real del audio */}
+          <SignalMeter />
         </div>
       </div>
     </section>
